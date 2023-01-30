@@ -14,6 +14,131 @@
 					"name": "contact",
 					"item": [
 						{
+							"name": "Negative test",
+							"item": [
+								{
+									"name": "Add new contact without first name",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "cb4fe53f-698b-430a-baff-7263c236ffb6",
+												"exec": [
+													"let name = pm.variables.replaceIn(\"{{$randomUserName}}\")\r",
+													"pm.collectionVariables.set(\"name\", `${name}`)\r",
+													"\r",
+													"let description = pm.variables.replaceIn(\"{{$randomLoremSentence}}\")\r",
+													"pm.collectionVariables.set(\"description\", `${description}`)"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "6e0f4093-1642-4c45-a07c-f32371ef954b",
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"id": "955b073a-b16b-4393-ba6c-8c4ab2be058a",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Access-Token",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"lastName\": \"{{lastName}}\",\r\n  \"description\": \"{{description}}\"\r\n}\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/contact",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"contact"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add new contact without all",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "483e23ae-91ab-4652-8cb1-cc8d170254c6",
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"id": "0f137224-4a72-4281-a4ca-384dd19ffb7c",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n}\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/contact",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"contact"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"id": "73ff8ca1-81a6-4215-9706-e20a8ca95dd7"
+						},
+						{
 							"name": "Add new contact",
 							"event": [
 								{
@@ -779,6 +904,36 @@
 						},
 						{
 							"name": "Get list of contacts by authenticated user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f8bda32b-70b5-4f3c-b0f6-5b4f91780015",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body contains id\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"id\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body contains firstName\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"firstName\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body contains lastName\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"lastName\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body contains description\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"description\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"id": "127bf618-27df-4935-b96a-e00c8c3f4a66",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
@@ -989,6 +1144,26 @@
 						},
 						{
 							"name": "Get user profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8c9c3644-180d-4df1-91b9-2bf24bc90613",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"firstname\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    let firstName = pm.collectionVariables.get(\"name\");\r",
+											"    pm.expect(jsonData.firstName).to.eql(firstName);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"id": "fec938b0-bbca-4efc-91f0-9d25c1ffc043",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
@@ -1209,192 +1384,115 @@
 					"id": "304c43ba-47f1-4118-b84d-5ac560ac4b4a"
 				},
 				{
-					"name": "user",
+					"name": "phone",
 					"item": [
 						{
-							"name": "password",
-							"item": [
+							"name": "Add new phone",
+							"event": [
 								{
-									"name": "Update password",
-									"id": "ddba6265-ce8f-4281-bb3f-edbe71ef383e",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
+									"listen": "prerequest",
+									"script": {
+										"id": "ae46f85d-e35d-4efd-8d90-b55f6838fb49",
+										"exec": [
+											"let phone = pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")\r",
+											"pm.collectionVariables.set(\"phone\", `${phone}`)"
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"password\": \"valid_password\",\n  \"token\": \"consequat sint et aliqua Ut\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/user/password",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"password"
-											]
-										},
-										"description": "Updating the password. The recovery token is contained within the request body"
-									},
-									"response": [
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "c7025359-4d3d-431d-b345-d0272f1df5ed",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"id": "a6524b8c-e1f7-41ad-8d7f-822264fa7271",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
 										{
-											"id": "98b90d44-4bab-43b6-92ad-43365f2fe71a",
-											"name": "OK",
-											"originalRequest": {
-												"method": "PUT",
-												"header": [
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n  \"password\": \"valid_password\",\n  \"token\": \"consequat sint et aliqua Ut\"\n}",
-													"options": {
-														"raw": {
-															"language": "json"
-														}
-													}
-												},
-												"url": {
-													"raw": "{{baseUrl}}/api/user/password",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"user",
-														"password"
-													]
-												},
-												"description": "Updating the password. The recovery token is contained within the request body"
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
+											"key": "key",
+											"value": "Access-Token",
+											"type": "string"
 										},
 										{
-											"id": "3aa76a70-5716-48c9-8cce-6ade713d7d07",
-											"name": "Bad Request",
-											"originalRequest": {
-												"method": "PUT",
-												"header": [
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n  \"password\": \"valid_password\",\n  \"token\": \"consequat sint et aliqua Ut\"\n}",
-													"options": {
-														"raw": {
-															"language": "json"
-														}
-													}
-												},
-												"url": {
-													"raw": "{{baseUrl}}/api/user/password",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"user",
-														"password"
-													]
-												},
-												"description": "Updating the password. The recovery token is contained within the request body"
-											},
-											"status": "Bad Request",
-											"code": 400,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
 										},
 										{
-											"id": "21b71996-eca3-46c9-a723-b25f0cb23780",
-											"name": "Internal Server Error",
-											"originalRequest": {
-												"method": "PUT",
-												"header": [
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n  \"password\": \"valid_password\",\n  \"token\": \"consequat sint et aliqua Ut\"\n}",
-													"options": {
-														"raw": {
-															"language": "json"
-														}
-													}
-												},
-												"url": {
-													"raw": "{{baseUrl}}/api/user/password",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"user",
-														"password"
-													]
-												},
-												"description": "Updating the password. The recovery token is contained within the request body"
-											},
-											"status": "Internal Server Error",
-											"code": 500,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
+											"key": "in",
+											"value": "header",
+											"type": "string"
 										}
 									]
 								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"{{phone}}\",\n  \"contactId\": {{contactId}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/phone",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"phone"
+									]
+								}
+							},
+							"response": [
 								{
-									"name": "Password recovery request",
-									"id": "45d07d2d-d3e9-4eeb-b2ad-0224e2c7f9c0",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
+									"id": "1fc38b1d-8ce9-47df-bbf0-e3d7f220d004",
+									"name": "Created",
+									"originalRequest": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Access-Token",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
 										"method": "POST",
 										"header": [
 											{
@@ -1404,7 +1502,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"email\": \"valid.email@email.com\"\n}",
+											"raw": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"contactId\": 1\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -1412,166 +1510,202 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/api/user/password/recovery",
+											"raw": "{{baseUrl}}/api/phone",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"api",
-												"user",
-												"password",
-												"recovery"
+												"phone"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"id": "6e047c17-f211-4cce-b767-5b8581c71630",
+									"name": "Bad Request",
+									"originalRequest": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Access-Token",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
 											]
 										},
-										"description": "Unauthorized user request for updating the password"
-									},
-									"response": [
-										{
-											"id": "6ed1cdfc-4c7e-4a18-9f90-d56d2ff85fdc",
-											"name": "OK",
-											"originalRequest": {
-												"method": "POST",
-												"header": [
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n  \"email\": \"valid.email@email.com\"\n}",
-													"options": {
-														"raw": {
-															"language": "json"
-														}
-													}
-												},
-												"url": {
-													"raw": "{{baseUrl}}/api/user/password/recovery",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"user",
-														"password",
-														"recovery"
-													]
-												},
-												"description": "Unauthorized user request for updating the password"
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"contactId\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
 												}
-											],
-											"cookie": [],
-											"body": ""
+											}
 										},
-										{
-											"id": "4d22b478-e419-4094-b833-178e7982fbe3",
-											"name": "Bad Request",
-											"originalRequest": {
-												"method": "POST",
-												"header": [
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n  \"email\": \"valid.email@email.com\"\n}",
-													"options": {
-														"raw": {
-															"language": "json"
-														}
-													}
-												},
-												"url": {
-													"raw": "{{baseUrl}}/api/user/password/recovery",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"user",
-														"password",
-														"recovery"
-													]
-												},
-												"description": "Unauthorized user request for updating the password"
-											},
-											"status": "Bad Request",
-											"code": 400,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
+										"url": {
+											"raw": "{{baseUrl}}/api/phone",
+											"host": [
+												"{{baseUrl}}"
 											],
-											"cookie": [],
-											"body": ""
-										},
-										{
-											"id": "325df8ca-efd4-4b05-8bdf-56b7a87d1b04",
-											"name": "Internal Server Error",
-											"originalRequest": {
-												"method": "POST",
-												"header": [
-													{
-														"key": "Content-Type",
-														"value": "application/json"
-													}
-												],
-												"body": {
-													"mode": "raw",
-													"raw": "{\n  \"email\": \"valid.email@email.com\"\n}",
-													"options": {
-														"raw": {
-															"language": "json"
-														}
-													}
-												},
-												"url": {
-													"raw": "{{baseUrl}}/api/user/password/recovery",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"user",
-														"password",
-														"recovery"
-													]
-												},
-												"description": "Unauthorized user request for updating the password"
-											},
-											"status": "Internal Server Error",
-											"code": 500,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
+											"path": [
+												"api",
+												"phone"
+											]
 										}
-									]
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"id": "db871657-a039-43b6-9af0-551c95f8e0ab",
+									"name": "Internal Server Error",
+									"originalRequest": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Access-Token",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"contactId\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/phone",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"phone"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
 								}
-							],
-							"id": "570faeb7-f57c-4ee6-a8ff-104b5fa45b1f"
+							]
 						},
 						{
-							"name": "Get the data of the authenticated user",
-							"id": "be55d1cb-75bd-475f-aceb-4bd89e30969c",
+							"name": "Get list of phones by contact id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "032cfc08-ff82-410f-98f6-723cf4a8f4b7",
+										"exec": [
+											"var jsonData = pm.response.json();\r",
+											"phoneId = jsonData[0].id;\r",
+											"pm.collectionVariables.set(\"phoneId\", phoneId);\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Your test name\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData[0].countryCode).to.eql(\"+49\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Your test name\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    let phone = pm.collectionVariables.get(\"phone\")\r",
+											"    pm.expect(jsonData[0].phoneNumber).to.eql(phone);\r",
+											"});\r",
+											"// pm.test(\"Body matches string\", function () {\r",
+											"//     pm.expect(pm.response.text()).to.include(\"+49\");\r",
+											"// });\r",
+											"\r",
+											"// pm.test(\"Body matches string\", function () {\r",
+											"//     pm.expect(pm.response.text()).to.include(1473);\r",
+											"// });\r",
+											"\r",
+											"pm.test(\"Your test name\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    let phone = pm.collectionVariables.get(\"phone\")\r",
+											"    pm.expect(jsonData[0].phoneNumber).to.eql(phone);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"id": "15c4cbc3-223d-4fee-8d96-d7bf928443b3",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -1604,20 +1738,21 @@
 									}
 								],
 								"url": {
-									"raw": "{{baseUrl}}/api/user",
+									"raw": "{{baseUrl}}/api/phone/{{contactId}}/all",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"user"
+										"phone",
+										"{{contactId}}",
+										"all"
 									]
-								},
-								"description": "Returns the data of the logged in user.\n\nUser data(needs user email) for updating is contained in the JWT"
+								}
 							},
 							"response": [
 								{
-									"id": "ab026545-7f09-4305-aff9-345b36266137",
+									"id": "582c4f67-c9b4-4e44-838e-b1f3621e3ca2",
 									"name": "OK",
 									"originalRequest": {
 										"auth": {
@@ -1648,16 +1783,24 @@
 											}
 										],
 										"url": {
-											"raw": "{{baseUrl}}/api/user",
+											"raw": "{{baseUrl}}/api/phone/:contactId/all",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"api",
-												"user"
+												"phone",
+												":contactId",
+												"all"
+											],
+											"variable": [
+												{
+													"key": "contactId",
+													"value": "1",
+													"description": "(Required) contact id"
+												}
 											]
-										},
-										"description": "Returns the data of the logged in user.\n\nUser data(needs user email) for updating is contained in the JWT"
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -1669,10 +1812,10 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n  \"email\": \"valid.email@email.com\",\n  \"password\": \"valid_password\",\n  \"roles\": [\n    \"ROLE_USER\",\n    \"ROLE_USER\"\n  ]\n}"
+									"body": "[\n  {\n    \"countryCode\": \"+49\",\n    \"phoneNumber\": \"017677788890\",\n    \"id\": 1,\n    \"contactId\": 1\n  },\n  {\n    \"countryCode\": \"+49\",\n    \"phoneNumber\": \"017677788890\",\n    \"id\": 1,\n    \"contactId\": 1\n  }\n]"
 								},
 								{
-									"id": "aa0a02f6-2472-456c-8c01-fd2356f8f29d",
+									"id": "f855104a-9996-4f0e-905e-ceefafef6703",
 									"name": "Bad Request",
 									"originalRequest": {
 										"auth": {
@@ -1703,16 +1846,24 @@
 											}
 										],
 										"url": {
-											"raw": "{{baseUrl}}/api/user",
+											"raw": "{{baseUrl}}/api/phone/:contactId/all",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"api",
-												"user"
+												"phone",
+												":contactId",
+												"all"
+											],
+											"variable": [
+												{
+													"key": "contactId",
+													"value": "1",
+													"description": "(Required) contact id"
+												}
 											]
-										},
-										"description": "Returns the data of the logged in user.\n\nUser data(needs user email) for updating is contained in the JWT"
+										}
 									},
 									"status": "Bad Request",
 									"code": 400,
@@ -1727,7 +1878,7 @@
 									"body": ""
 								},
 								{
-									"id": "0e234a8f-56cb-432c-866d-55efe8bf1904",
+									"id": "44ac8641-12d3-4cae-8a45-3cc4ef580131",
 									"name": "Internal Server Error",
 									"originalRequest": {
 										"auth": {
@@ -1758,16 +1909,24 @@
 											}
 										],
 										"url": {
-											"raw": "{{baseUrl}}/api/user",
+											"raw": "{{baseUrl}}/api/phone/:contactId/all",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"api",
-												"user"
+												"phone",
+												":contactId",
+												"all"
+											],
+											"variable": [
+												{
+													"key": "contactId",
+													"value": "1",
+													"description": "(Required) contact id"
+												}
 											]
-										},
-										"description": "Returns the data of the logged in user.\n\nUser data(needs user email) for updating is contained in the JWT"
+										}
 									},
 									"status": "Internal Server Error",
 									"code": 500,
@@ -1784,194 +1943,32 @@
 							]
 						},
 						{
-							"name": "New user registration",
-							"id": "c075d568-66cb-4c5d-b246-e368f8ccdbf6",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "*/*"
+							"name": "Get phone by phone id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "80bbc3ba-0a52-4657-8a15-c8a05eef01f9",
+										"exec": [
+											"var jsonData = pm.response.json();\r",
+											"contactId = jsonData.id;\r",
+											"pm.collectionVariables.set(\"contactId\", contactId);\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check phoneNumber\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    let phoneNumber = pm.collectionVariables.get(\"phone\")\r",
+											"    pm.expect(jsonData.phoneNumber).to.eql(phoneNumber);\r",
+											"});"
+										],
+										"type": "text/javascript"
 									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"valid.email@email.com\",\n  \"password\": \"valid_password\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/api/user",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"user"
-									]
-								},
-								"description": "An email will be sent with a link to activation to the address specified during registration. The link will contain an activation token\n\nEmail validation pattern: ^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,10}$"
-							},
-							"response": [
-								{
-									"id": "4f650726-b165-4704-a924-507002732753",
-									"name": "Created",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"email\": \"valid.email@email.com\",\n  \"password\": \"valid_password\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/user",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user"
-											]
-										},
-										"description": "An email will be sent with a link to activation to the address specified during registration. The link will contain an activation token\n\nEmail validation pattern: ^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,10}$"
-									},
-									"status": "Created",
-									"code": 201,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "deserunt consequat occaecat consectetur"
-								},
-								{
-									"id": "5a47d86b-d612-46d2-bcca-cb6d06ba415f",
-									"name": "Bad Request",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"email\": \"valid.email@email.com\",\n  \"password\": \"valid_password\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/user",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user"
-											]
-										},
-										"description": "An email will be sent with a link to activation to the address specified during registration. The link will contain an activation token\n\nEmail validation pattern: ^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,10}$"
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "ba6224c7-82c3-45b0-8fea-e1f3744653c3",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"email\": \"valid.email@email.com\",\n  \"password\": \"valid_password\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/user",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user"
-											]
-										},
-										"description": "An email will be sent with a link to activation to the address specified during registration. The link will contain an activation token\n\nEmail validation pattern: ^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,10}$"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
 								}
-							]
-						},
-						{
-							"name": "Updating the password of registered user",
-							"id": "40cb936b-3dc3-4d75-930f-a9ecad412351",
+							],
+							"id": "e4777bb1-5874-482f-a3c5-7f93e32ea3ee",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -1996,240 +1993,6 @@
 										}
 									]
 								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"password\": \"valid_password\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/api/user/auth-password",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"user",
-										"auth-password"
-									]
-								},
-								"description": "Updating the password of registered user. \n\nUser data(needs user email) for updating is contained in the JWT"
-							},
-							"response": [
-								{
-									"id": "909f76cf-2c53-4823-b1b8-befc273b23c7",
-									"name": "OK",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"password\": \"valid_password\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/user/auth-password",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"auth-password"
-											]
-										},
-										"description": "Updating the password of registered user. \n\nUser data(needs user email) for updating is contained in the JWT"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "2d05a42c-ac03-4e70-9a8f-6277fbe137ae",
-									"name": "Bad Request",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"password\": \"valid_password\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/user/auth-password",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"auth-password"
-											]
-										},
-										"description": "Updating the password of registered user. \n\nUser data(needs user email) for updating is contained in the JWT"
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "75538ca7-0f14-41e9-bd3c-8022b16ba42e",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"password\": \"valid_password\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/user/auth-password",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"auth-password"
-											]
-										},
-										"description": "Updating the password of registered user. \n\nUser data(needs user email) for updating is contained in the JWT"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Get JWT of test user",
-							"id": "46b65033-042c-412e-91b6-5b76367c9289",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
 								"method": "GET",
 								"header": [
 									{
@@ -2237,24 +2000,48 @@
 										"value": "*/*"
 									}
 								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
 								"url": {
-									"raw": "{{baseUrl}}/api/user/token",
+									"raw": "{{baseUrl}}/api/phone/{{contactId}}/all",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"user",
-										"token"
+										"phone",
+										"{{contactId}}",
+										"all"
 									]
-								},
-								"description": "This token will expire on 07 October 2036\n\nTest user email: test@gmail.com"
+								}
 							},
 							"response": [
 								{
-									"id": "0859cef4-259f-443c-8495-e511fef992ea",
+									"id": "1a54affc-b828-418a-849e-ed414388fc6e",
 									"name": "OK",
 									"originalRequest": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Access-Token",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
 										"method": "GET",
 										"header": [
 											{
@@ -2263,21 +2050,27 @@
 											}
 										],
 										"url": {
-											"raw": "{{baseUrl}}/api/user/token",
+											"raw": "{{baseUrl}}/api/phone/:id",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"api",
-												"user",
-												"token"
+												"phone",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1",
+													"description": "(Required) phone id"
+												}
 											]
-										},
-										"description": "This token will expire on 07 October 2036\n\nTest user email: test@gmail.com"
+										}
 									},
 									"status": "OK",
 									"code": 200,
-									"_postman_previewlanguage": "text",
+									"_postman_previewlanguage": "json",
 									"header": [
 										{
 											"key": "Content-Type",
@@ -2285,248 +2078,12 @@
 										}
 									],
 									"cookie": [],
-									"body": "deserunt consequat occaecat consectetur"
+									"body": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"id\": 1,\n  \"contactId\": 1\n}"
 								},
 								{
-									"id": "b2ee05f1-a7ce-495e-9d3a-401d9727b33c",
+									"id": "5804b9fc-66cb-49b8-ae22-a5735961ed49",
 									"name": "Bad Request",
 									"originalRequest": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/user/token",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"token"
-											]
-										},
-										"description": "This token will expire on 07 October 2036\n\nTest user email: test@gmail.com"
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "ef19ee21-c3f7-4fec-8c81-3e62c565d5d8",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/user/token",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"token"
-											]
-										},
-										"description": "This token will expire on 07 October 2036\n\nTest user email: test@gmail.com"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Activate registered user",
-							"id": "fcf2cfc0-b469-4cf4-9a32-f883ea97d418",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/api/user/activation/:token",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"user",
-										"activation",
-										":token"
-									],
-									"variable": [
-										{
-											"key": "token",
-											"value": "deserunt consequat occaecat consectetur",
-											"description": "(Required) password recovery token"
-										}
-									]
-								},
-								"description": "As a parameter, you need to specify the token that was sent to the email of the registered user"
-							},
-							"response": [
-								{
-									"id": "49a04dc4-d7a1-4ecb-9bc0-a778374c6ff8",
-									"name": "OK",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/api/user/activation/:token",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"activation",
-												":token"
-											],
-											"variable": [
-												{
-													"key": "token",
-													"value": "deserunt consequat occaecat consectetur",
-													"description": "(Required) password recovery token"
-												}
-											]
-										},
-										"description": "As a parameter, you need to specify the token that was sent to the email of the registered user"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "2dee8042-0b63-47aa-9347-53c9b12b1b2d",
-									"name": "Bad Request",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/api/user/activation/:token",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"activation",
-												":token"
-											],
-											"variable": [
-												{
-													"key": "token",
-													"value": "deserunt consequat occaecat consectetur",
-													"description": "(Required) password recovery token"
-												}
-											]
-										},
-										"description": "As a parameter, you need to specify the token that was sent to the email of the registered user"
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "288de515-5d68-411f-abaa-8fbbd033fec0",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/api/user/activation/:token",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												"activation",
-												":token"
-											],
-											"variable": [
-												{
-													"key": "token",
-													"value": "deserunt consequat occaecat consectetur",
-													"description": "(Required) password recovery token"
-												}
-											]
-										},
-										"description": "As a parameter, you need to specify the token that was sent to the email of the registered user"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						}
-					],
-					"id": "ce817005-90ec-4d66-b887-c517f78204c2"
-				},
-				{
-					"name": "phone",
-					"item": [
-						{
-							"name": "{id}",
-							"item": [
-								{
-									"name": "Get phone by phone id",
-									"id": "e4777bb1-5874-482f-a3c5-7f93e32ea3ee",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
 										"auth": {
 											"type": "apikey",
 											"apikey": [
@@ -2573,202 +2130,22 @@
 											]
 										}
 									},
-									"response": [
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [
 										{
-											"id": "1a54affc-b828-418a-849e-ed414388fc6e",
-											"name": "OK",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "GET",
-												"header": [
-													{
-														"key": "Accept",
-														"value": "*/*"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/phone/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"phone",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) phone id"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "json",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "*/*"
-												}
-											],
-											"cookie": [],
-											"body": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"id\": 1,\n  \"contactId\": 1\n}"
-										},
-										{
-											"id": "5804b9fc-66cb-49b8-ae22-a5735961ed49",
-											"name": "Bad Request",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "GET",
-												"header": [
-													{
-														"key": "Accept",
-														"value": "*/*"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/phone/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"phone",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) phone id"
-														}
-													]
-												}
-											},
-											"status": "Bad Request",
-											"code": 400,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										},
-										{
-											"id": "d48b760c-d20f-4f2e-bf20-49d44f3dcc7d",
-											"name": "Internal Server Error",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "GET",
-												"header": [
-													{
-														"key": "Accept",
-														"value": "*/*"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/phone/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"phone",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) phone id"
-														}
-													]
-												}
-											},
-											"status": "Internal Server Error",
-											"code": 500,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
+											"key": "Content-Type",
+											"value": "text/plain"
 										}
-									]
+									],
+									"cookie": [],
+									"body": ""
 								},
 								{
-									"name": "Delete phone by phone id",
-									"id": "8baa3ac8-fb6c-44e7-b33a-bfbc28403395",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
+									"id": "d48b760c-d20f-4f2e-bf20-49d44f3dcc7d",
+									"name": "Internal Server Error",
+									"originalRequest": {
 										"auth": {
 											"type": "apikey",
 											"apikey": [
@@ -2789,8 +2166,13 @@
 												}
 											]
 										},
-										"method": "DELETE",
-										"header": [],
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
 										"url": {
 											"raw": "{{baseUrl}}/api/phone/:id",
 											"host": [
@@ -2810,185 +2192,35 @@
 											]
 										}
 									},
-									"response": [
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
 										{
-											"id": "9d99bfa4-4767-4770-b634-14a10869a2ec",
-											"name": "OK",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "DELETE",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/api/phone/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"phone",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) phone id"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										},
-										{
-											"id": "6af343f0-dbea-4543-aff2-7dfe6fb5ba32",
-											"name": "Bad Request",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "DELETE",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/api/phone/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"phone",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) phone id"
-														}
-													]
-												}
-											},
-											"status": "Bad Request",
-											"code": 400,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										},
-										{
-											"id": "bb369a7e-d1b4-4357-8643-e7fc1846cdc2",
-											"name": "Internal Server Error",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "DELETE",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/api/phone/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"phone",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) phone id"
-														}
-													]
-												}
-											},
-											"status": "Internal Server Error",
-											"code": 500,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
+											"key": "Content-Type",
+											"value": "text/plain"
 										}
-									]
+									],
+									"cookie": [],
+									"body": ""
 								}
-							],
-							"id": "d03d05af-3a36-46fc-b2c2-db56bb476d06"
+							]
 						},
 						{
 							"name": "Update phone",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "58000b1d-7a99-45d7-bf20-f8909b5834c2",
+										"exec": [
+											"let updatePhone = pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")\r",
+											"pm.collectionVariables.set(\"updatePhone\", `${updatePhone}`)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"id": "49c5288d-f1fa-4517-8a88-f6910487439a",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
@@ -3234,1794 +2466,8 @@
 							]
 						},
 						{
-							"name": "Add new phone",
-							"id": "a6524b8c-e1f7-41ad-8d7f-822264fa7271",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "key",
-											"value": "Access-Token",
-											"type": "string"
-										},
-										{
-											"key": "value",
-											"value": "{{apiKey}}",
-											"type": "string"
-										},
-										{
-											"key": "in",
-											"value": "header",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"contactId\": 1\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/api/phone",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"phone"
-									]
-								}
-							},
-							"response": [
-								{
-									"id": "1fc38b1d-8ce9-47df-bbf0-e3d7f220d004",
-									"name": "Created",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"contactId\": 1\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/phone",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"phone"
-											]
-										}
-									},
-									"status": "Created",
-									"code": 201,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "6e047c17-f211-4cce-b767-5b8581c71630",
-									"name": "Bad Request",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"contactId\": 1\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/phone",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"phone"
-											]
-										}
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "db871657-a039-43b6-9af0-551c95f8e0ab",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"countryCode\": \"+49\",\n  \"phoneNumber\": \"017677788890\",\n  \"contactId\": 1\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/phone",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"phone"
-											]
-										}
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Get list of phones by contact id",
-							"id": "15c4cbc3-223d-4fee-8d96-d7bf928443b3",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "key",
-											"value": "Access-Token",
-											"type": "string"
-										},
-										{
-											"key": "value",
-											"value": "{{apiKey}}",
-											"type": "string"
-										},
-										{
-											"key": "in",
-											"value": "header",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "*/*"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/api/phone/:contactId/all",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"phone",
-										":contactId",
-										"all"
-									],
-									"variable": [
-										{
-											"key": "contactId",
-											"value": "1",
-											"description": "(Required) contact id"
-										}
-									]
-								}
-							},
-							"response": [
-								{
-									"id": "582c4f67-c9b4-4e44-838e-b1f3621e3ca2",
-									"name": "OK",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/phone/:contactId/all",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"phone",
-												":contactId",
-												"all"
-											],
-											"variable": [
-												{
-													"key": "contactId",
-													"value": "1",
-													"description": "(Required) contact id"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "[\n  {\n    \"countryCode\": \"+49\",\n    \"phoneNumber\": \"017677788890\",\n    \"id\": 1,\n    \"contactId\": 1\n  },\n  {\n    \"countryCode\": \"+49\",\n    \"phoneNumber\": \"017677788890\",\n    \"id\": 1,\n    \"contactId\": 1\n  }\n]"
-								},
-								{
-									"id": "f855104a-9996-4f0e-905e-ceefafef6703",
-									"name": "Bad Request",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/phone/:contactId/all",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"phone",
-												":contactId",
-												"all"
-											],
-											"variable": [
-												{
-													"key": "contactId",
-													"value": "1",
-													"description": "(Required) contact id"
-												}
-											]
-										}
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "44ac8641-12d3-4cae-8a45-3cc4ef580131",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/phone/:contactId/all",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"phone",
-												":contactId",
-												"all"
-											],
-											"variable": [
-												{
-													"key": "contactId",
-													"value": "1",
-													"description": "(Required) contact id"
-												}
-											]
-										}
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						}
-					],
-					"id": "af104aa8-5389-42eb-bb19-6672182a3bff"
-				},
-				{
-					"name": "my-contacts",
-					"item": [
-						{
-							"name": "{id}",
-							"item": [
-								{
-									"name": "Get contact by contact id",
-									"id": "f95d87c1-04e1-4219-a066-c5117b7b371c",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts/:id",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts",
-												":id"
-											],
-											"variable": [
-												{
-													"key": "id",
-													"value": "1",
-													"description": "(Required) contact id"
-												}
-											]
-										}
-									},
-									"response": [
-										{
-											"id": "c2b778a5-7c57-49a2-bc57-4c10b1ab629b",
-											"name": "OK",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "GET",
-												"header": [
-													{
-														"key": "Access-Token",
-														"value": "deserunt consequat occaecat consectetur"
-													},
-													{
-														"key": "Accept",
-														"value": "*/*"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/my-contacts/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"my-contacts",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) contact id"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "json",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "*/*"
-												}
-											],
-											"cookie": [],
-											"body": "{\n  \"id\": 19768118,\n  \"firstName\": \"sit amet dolore\",\n  \"lastName\": \"tempor laboris est sint\",\n  \"description\": \"velit eu do\",\n  \"address\": \"pariatur sit Lorem do\",\n  \"phone\": \"aliquip ut\",\n  \"email\": \"laboris cillum aute ut\"\n}"
-										},
-										{
-											"id": "3ff18311-809e-4beb-87aa-ee72cc6e77c7",
-											"name": "Bad Request",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "GET",
-												"header": [
-													{
-														"key": "Access-Token",
-														"value": "deserunt consequat occaecat consectetur"
-													},
-													{
-														"key": "Accept",
-														"value": "*/*"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/my-contacts/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"my-contacts",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) contact id"
-														}
-													]
-												}
-											},
-											"status": "Bad Request",
-											"code": 400,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										},
-										{
-											"id": "88a4f129-5e5b-424c-a1d5-b0cca75804eb",
-											"name": "Internal Server Error",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "GET",
-												"header": [
-													{
-														"key": "Access-Token",
-														"value": "deserunt consequat occaecat consectetur"
-													},
-													{
-														"key": "Accept",
-														"value": "*/*"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/my-contacts/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"my-contacts",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) contact id"
-														}
-													]
-												}
-											},
-											"status": "Internal Server Error",
-											"code": 500,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										}
-									]
-								},
-								{
-									"name": "Delete contact by contact id",
-									"id": "56ffaf66-5ab7-40f3-9056-5adfd65939b7",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "DELETE",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts/:id",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts",
-												":id"
-											],
-											"variable": [
-												{
-													"key": "id",
-													"value": "1",
-													"description": "(Required) contact id"
-												}
-											]
-										}
-									},
-									"response": [
-										{
-											"id": "61ce1246-f241-4d1f-b03b-ee1e51652c81",
-											"name": "OK",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "DELETE",
-												"header": [
-													{
-														"key": "Access-Token",
-														"value": "deserunt consequat occaecat consectetur"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/my-contacts/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"my-contacts",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) contact id"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										},
-										{
-											"id": "14f6cbe3-0ebc-45a1-b707-05e1f9462ff7",
-											"name": "Bad Request",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "DELETE",
-												"header": [
-													{
-														"key": "Access-Token",
-														"value": "deserunt consequat occaecat consectetur"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/my-contacts/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"my-contacts",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) contact id"
-														}
-													]
-												}
-											},
-											"status": "Bad Request",
-											"code": 400,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										},
-										{
-											"id": "ebb3f938-30a1-4a52-87ef-ad07ebb14e35",
-											"name": "Internal Server Error",
-											"originalRequest": {
-												"auth": {
-													"type": "apikey",
-													"apikey": [
-														{
-															"key": "key",
-															"value": "Access-Token",
-															"type": "string"
-														},
-														{
-															"key": "value",
-															"value": "{{apiKey}}",
-															"type": "string"
-														},
-														{
-															"key": "in",
-															"value": "header",
-															"type": "string"
-														}
-													]
-												},
-												"method": "DELETE",
-												"header": [
-													{
-														"key": "Access-Token",
-														"value": "deserunt consequat occaecat consectetur"
-													}
-												],
-												"url": {
-													"raw": "{{baseUrl}}/api/my-contacts/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"my-contacts",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1",
-															"description": "(Required) contact id"
-														}
-													]
-												}
-											},
-											"status": "Internal Server Error",
-											"code": 500,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "text/plain"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										}
-									]
-								}
-							],
-							"id": "550beb92-16a6-457b-952c-acdbf45cf656"
-						},
-						{
-							"name": "Get list of contacts by authenticated user",
-							"id": "d483a600-920d-4856-a4b2-334b688cf6e1",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "key",
-											"value": "Access-Token",
-											"type": "string"
-										},
-										{
-											"key": "value",
-											"value": "{{apiKey}}",
-											"type": "string"
-										},
-										{
-											"key": "in",
-											"value": "header",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Access-Token",
-										"value": "deserunt consequat occaecat consectetur"
-									},
-									{
-										"key": "Accept",
-										"value": "*/*"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/api/my-contacts",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"my-contacts"
-									]
-								}
-							},
-							"response": [
-								{
-									"id": "0a5248a3-684f-4787-bdec-e6421a8bd58d",
-									"name": "OK",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "[\n  {\n    \"id\": -40576472,\n    \"firstName\": \"id consequat reprehenderit\",\n    \"lastName\": \"Excepteur laboris Duis nostrud dolore\",\n    \"description\": \"mollit\",\n    \"address\": \"ut culpa\",\n    \"phone\": \"magna fugiat eiusmod ex\",\n    \"email\": \"Ut in esse\"\n  },\n  {\n    \"id\": -76155740,\n    \"firstName\": \"aliquip occaecat\",\n    \"lastName\": \"enim ullamco tempor deserunt\",\n    \"description\": \"consequat elit id fugiat\",\n    \"address\": \"reprehenderit est\",\n    \"phone\": \"laborum aliqua proident\",\n    \"email\": \"labo\"\n  }\n]"
-								},
-								{
-									"id": "369ade8b-8025-42c3-9d76-d2b97df21d5e",
-									"name": "Bad Request",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "2b3f7c09-d42a-4087-baab-c94fa70957b8",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Update contact",
-							"id": "c2d81322-1a77-484d-b659-bbe8479a6000",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "key",
-											"value": "Access-Token",
-											"type": "string"
-										},
-										{
-											"key": "value",
-											"value": "{{apiKey}}",
-											"type": "string"
-										},
-										{
-											"key": "in",
-											"value": "header",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Access-Token",
-										"value": "deserunt consequat occaecat consectetur"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "*/*"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"id\": 19768118,\n  \"firstName\": \"sit amet dolore\",\n  \"lastName\": \"tempor laboris est sint\",\n  \"description\": \"velit eu do\",\n  \"address\": \"pariatur sit Lorem do\",\n  \"phone\": \"aliquip ut\",\n  \"email\": \"laboris cillum aute ut\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/api/my-contacts",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"my-contacts"
-									]
-								}
-							},
-							"response": [
-								{
-									"id": "e9bfbf67-fb95-4815-802c-20ec48279d30",
-									"name": "OK",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"id\": 19768118,\n  \"firstName\": \"sit amet dolore\",\n  \"lastName\": \"tempor laboris est sint\",\n  \"description\": \"velit eu do\",\n  \"address\": \"pariatur sit Lorem do\",\n  \"phone\": \"aliquip ut\",\n  \"email\": \"laboris cillum aute ut\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "{\n  \"id\": 19768118,\n  \"firstName\": \"sit amet dolore\",\n  \"lastName\": \"tempor laboris est sint\",\n  \"description\": \"velit eu do\",\n  \"address\": \"pariatur sit Lorem do\",\n  \"phone\": \"aliquip ut\",\n  \"email\": \"laboris cillum aute ut\"\n}"
-								},
-								{
-									"id": "3ae38c80-87dc-4331-84c8-0f23cda0c0bf",
-									"name": "Bad Request",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"id\": 19768118,\n  \"firstName\": \"sit amet dolore\",\n  \"lastName\": \"tempor laboris est sint\",\n  \"description\": \"velit eu do\",\n  \"address\": \"pariatur sit Lorem do\",\n  \"phone\": \"aliquip ut\",\n  \"email\": \"laboris cillum aute ut\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "eb9c9793-cf23-48f0-b70b-257488f4e067",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"id\": 19768118,\n  \"firstName\": \"sit amet dolore\",\n  \"lastName\": \"tempor laboris est sint\",\n  \"description\": \"velit eu do\",\n  \"address\": \"pariatur sit Lorem do\",\n  \"phone\": \"aliquip ut\",\n  \"email\": \"laboris cillum aute ut\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Add new contact",
-							"id": "c56fac6a-0b30-4e3c-af67-0544b8774bab",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "key",
-											"value": "Access-Token",
-											"type": "string"
-										},
-										{
-											"key": "value",
-											"value": "{{apiKey}}",
-											"type": "string"
-										},
-										{
-											"key": "in",
-											"value": "header",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Access-Token",
-										"value": "deserunt consequat occaecat consectetur"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "*/*"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"firstName\": \"Max\",\n  \"lastName\": \"Mustermann\",\n  \"description\": \"This is an example of a contact\",\n  \"address\": \"Berlin, 10117, Friedrichstraße 176-179\",\n  \"phone\": \"017677788890\",\n  \"email\": \"max.mustermann@gamil.mock\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/api/my-contacts",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"my-contacts"
-									]
-								}
-							},
-							"response": [
-								{
-									"id": "44a91ebf-da49-412c-adcc-9aa50406f307",
-									"name": "Created",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"firstName\": \"Max\",\n  \"lastName\": \"Mustermann\",\n  \"description\": \"This is an example of a contact\",\n  \"address\": \"Berlin, 10117, Friedrichstraße 176-179\",\n  \"phone\": \"017677788890\",\n  \"email\": \"max.mustermann@gamil.mock\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "Created",
-									"code": 201,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "{\n  \"id\": 19768118,\n  \"firstName\": \"sit amet dolore\",\n  \"lastName\": \"tempor laboris est sint\",\n  \"description\": \"velit eu do\",\n  \"address\": \"pariatur sit Lorem do\",\n  \"phone\": \"aliquip ut\",\n  \"email\": \"laboris cillum aute ut\"\n}"
-								},
-								{
-									"id": "7c8df1e4-55f1-490c-b565-3c03249eff39",
-									"name": "Bad Request",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"firstName\": \"Max\",\n  \"lastName\": \"Mustermann\",\n  \"description\": \"This is an example of a contact\",\n  \"address\": \"Berlin, 10117, Friedrichstraße 176-179\",\n  \"phone\": \"017677788890\",\n  \"email\": \"max.mustermann@gamil.mock\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"id": "887039b9-9fcb-475a-9944-213acd44eedd",
-									"name": "Internal Server Error",
-									"originalRequest": {
-										"auth": {
-											"type": "apikey",
-											"apikey": [
-												{
-													"key": "key",
-													"value": "Access-Token",
-													"type": "string"
-												},
-												{
-													"key": "value",
-													"value": "{{apiKey}}",
-													"type": "string"
-												},
-												{
-													"key": "in",
-													"value": "header",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "Accept",
-												"value": "*/*"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"firstName\": \"Max\",\n  \"lastName\": \"Mustermann\",\n  \"description\": \"This is an example of a contact\",\n  \"address\": \"Berlin, 10117, Friedrichstraße 176-179\",\n  \"phone\": \"017677788890\",\n  \"email\": \"max.mustermann@gamil.mock\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"my-contacts"
-											]
-										}
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Delete all contact by authenticated user",
-							"id": "8cb4b8e5-cc35-4b4e-9026-db42ebf73d08",
+							"name": "Delete phone by phone id",
+							"id": "8baa3ac8-fb6c-44e7-b33a-bfbc28403395",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -5047,27 +2493,29 @@
 									]
 								},
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "Access-Token",
-										"value": "deserunt consequat occaecat consectetur"
-									}
-								],
+								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/api/my-contacts/all",
+									"raw": "{{baseUrl}}/api/phone/:id",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"my-contacts",
-										"all"
+										"phone",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1",
+											"description": "(Required) phone id"
+										}
 									]
 								}
 							},
 							"response": [
 								{
-									"id": "8855f004-0702-4e56-b0e6-298283010edf",
+									"id": "9d99bfa4-4767-4770-b634-14a10869a2ec",
 									"name": "OK",
 									"originalRequest": {
 										"auth": {
@@ -5091,21 +2539,23 @@
 											]
 										},
 										"method": "DELETE",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											}
-										],
+										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts/all",
+											"raw": "{{baseUrl}}/api/phone/:id",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"api",
-												"my-contacts",
-												"all"
+												"phone",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1",
+													"description": "(Required) phone id"
+												}
 											]
 										}
 									},
@@ -5122,7 +2572,7 @@
 									"body": ""
 								},
 								{
-									"id": "e1d2b2d4-60a7-469e-9707-87d324a1a2ba",
+									"id": "6af343f0-dbea-4543-aff2-7dfe6fb5ba32",
 									"name": "Bad Request",
 									"originalRequest": {
 										"auth": {
@@ -5146,21 +2596,23 @@
 											]
 										},
 										"method": "DELETE",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											}
-										],
+										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts/all",
+											"raw": "{{baseUrl}}/api/phone/:id",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"api",
-												"my-contacts",
-												"all"
+												"phone",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1",
+													"description": "(Required) phone id"
+												}
 											]
 										}
 									},
@@ -5177,7 +2629,7 @@
 									"body": ""
 								},
 								{
-									"id": "b351e283-ee0b-40ff-93e6-abe99cb31372",
+									"id": "bb369a7e-d1b4-4357-8643-e7fc1846cdc2",
 									"name": "Internal Server Error",
 									"originalRequest": {
 										"auth": {
@@ -5201,21 +2653,23 @@
 											]
 										},
 										"method": "DELETE",
-										"header": [
-											{
-												"key": "Access-Token",
-												"value": "deserunt consequat occaecat consectetur"
-											}
-										],
+										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/api/my-contacts/all",
+											"raw": "{{baseUrl}}/api/phone/:id",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"api",
-												"my-contacts",
-												"all"
+												"phone",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1",
+													"description": "(Required) phone id"
+												}
 											]
 										}
 									},
@@ -5234,7 +2688,7 @@
 							]
 						}
 					],
-					"id": "52faac17-ee5a-4b45-880b-8ad8ce9ddc88"
+					"id": "af104aa8-5389-42eb-bb19-6672182a3bff"
 				},
 				{
 					"name": "email",
@@ -7927,50 +5381,65 @@
 	],
 	"variable": [
 		{
-			"id": "9cbd56bf-689e-4f87-87d9-46e6e3d5eb63",
+			"id": "6c3cb53a-c2bf-4ae1-8e01-a77a9639e055",
 			"key": "baseUrl",
 			"value": "http://phonebook.telran-edu.de:8080",
 			"type": "string"
 		},
 		{
-			"id": "e6794588-e3f6-43ea-af1f-e89c385c71fb",
+			"id": "bdac7ae9-fe28-4d0f-8463-b3747062a569",
 			"key": "apiKey",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "0df5e2ff-07a6-4688-89a9-372f3f490f3c",
+			"id": "8acffeeb-dc07-4e30-bc62-08dcddbbcbe6",
 			"key": "name",
 			"value": ""
 		},
 		{
-			"id": "988072ce-7129-4235-8b33-a873c9dd8d6f",
+			"id": "c4dd6f19-dd36-4fa2-84de-14c075dd802b",
 			"key": "lastName",
 			"value": ""
 		},
 		{
-			"id": "3f05d4fe-affd-45de-9517-3148103db382",
+			"id": "b18ec2b7-8cdd-4b69-bc57-c598e4060e6f",
 			"key": "description",
 			"value": ""
 		},
 		{
-			"id": "5db17ec6-c635-478b-8c56-f7c695efb916",
+			"id": "a0dcedd2-52f9-48a5-9f37-1ab30fba87da",
 			"key": "contactId",
 			"value": ""
 		},
 		{
-			"id": "b0e8588a-143a-4e07-a96e-140b841f100a",
+			"id": "eb287a79-2a39-431c-bf41-4c647c839e31",
 			"key": "updateName",
 			"value": ""
 		},
 		{
-			"id": "870b90e5-3d6d-4746-a1a3-0bf5598dc0dc",
+			"id": "0e8a7150-3f07-4655-8524-313065afef17",
 			"key": "updateLastName",
 			"value": ""
 		},
 		{
-			"id": "f1e9e0dd-0fee-4c52-aef8-a5b0d050ade7",
+			"id": "6076bb27-dddd-4d05-a305-88cb1dee24a6",
 			"key": "updateDescription",
+			"value": ""
+		},
+		{
+			"id": "31327a82-d9b5-40ad-a075-b1c228f0bcc1",
+			"key": "phone",
+			"value": ""
+		},
+		{
+			"id": "cc7290d4-4139-4722-994c-d8dd6a546040",
+			"key": "phoneId",
+			"value": ""
+		},
+		{
+			"id": "7f7bb6b3-64e9-4e4e-be93-28f299645859",
+			"key": "updatePhone",
 			"value": ""
 		}
 	]
